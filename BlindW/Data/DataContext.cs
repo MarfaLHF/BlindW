@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using BlindW.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlindW.Data
@@ -17,5 +18,11 @@ namespace BlindW.Data
         {
             optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
         }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Level> Levels { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<Leaderboard> Leaderboards { get; set; }
+
     }
 }

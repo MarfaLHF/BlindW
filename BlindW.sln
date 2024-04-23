@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlindW", "BlindW\BlindW.csproj", "{8ED6A40F-5C35-4501-BD11-8EA119ECEB12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlindW", "BlindW\BlindW.csproj", "{8ED6A40F-5C35-4501-BD11-8EA119ECEB12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{BAFE3608-7059-4191-BA63-085B8D470828}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8ED6A40F-5C35-4501-BD11-8EA119ECEB12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8ED6A40F-5C35-4501-BD11-8EA119ECEB12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8ED6A40F-5C35-4501-BD11-8EA119ECEB12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAFE3608-7059-4191-BA63-085B8D470828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAFE3608-7059-4191-BA63-085B8D470828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAFE3608-7059-4191-BA63-085B8D470828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAFE3608-7059-4191-BA63-085B8D470828}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
