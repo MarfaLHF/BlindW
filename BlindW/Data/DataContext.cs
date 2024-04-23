@@ -5,8 +5,17 @@ namespace BlindW.Data
 {
     public class DataContext : IdentityDbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+
+        private readonly IConfiguration _configuration;
+
+        public DataContext(IConfiguration configuration)
         {
+            _configuration = configuration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
         }
     }
 }
