@@ -16,10 +16,12 @@ namespace Client.Controllers
             _userApiClient = userApiClient;
         }
 
-        public async Task<IActionResult> Index() // Добавьте 'async' и параметр 'id', если он вам нужен
+        public async Task<IActionResult> Index() 
         {
-            var lessons = await _userApiClient.GetLessons();
-            return View(lessons);
+            //Пример получение записей
+            //var lessons = await _userApiClient.GetLessons();
+            //return View(lessons);
+            return View();
         }
 
         public IActionResult Privacy()
@@ -32,5 +34,34 @@ namespace Client.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public async Task<IActionResult> Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _userApiClient.RegisterUser(model);
+
+            if (result.IsSuccess)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+
+            return View(model);
+        }
+
     }
 }

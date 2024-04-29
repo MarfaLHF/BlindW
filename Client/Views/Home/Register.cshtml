@@ -1,0 +1,13 @@
+﻿@model RegisterModel
+
+<form asp-action="Register" method="post">
+    <div>
+        <label for="Email">Имя пользователя:</label>
+        <input asp-for="Email" type="text" id="Email" />
+    </div>
+    <div>
+        <label for="Password">Пароль:</label>
+        <input asp-for="Password" type="password" id="Password" />
+    </div>
+    <button type="submit">Зарегистрироваться</button>
+</form>

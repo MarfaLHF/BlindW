@@ -1,11 +1,13 @@
 ﻿using BlindW.Data.Models;
+using Client.Models;
 using Refit;
 
 namespace Client.Services
 {
     public interface InterfaceClient
     {
-        [Get("/Lessons")] 
-        Task<IEnumerable<Lesson>> GetLessons();
+        [Post("/register")]
+        Task<ApiResponse> RegisterUser(RegisterModel model);
+
     }
 }

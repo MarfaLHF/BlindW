@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddRefitClient<InterfaceClient>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7271/api"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7271"));
 
 builder.Services.AddControllersWithViews();
 
