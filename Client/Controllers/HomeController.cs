@@ -1,4 +1,5 @@
 using Client.Models;
+using Client.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,15 +8,18 @@ namespace Client.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly InterfaceClient _userApiClient;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, InterfaceClient userApiClient)
         {
             _logger = logger;
+            _userApiClient = userApiClient;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index() // Добавьте 'async' и параметр 'id', если он вам нужен
         {
-            return View();
+            var lessons = await _userApiClient.GetLessons();
+            return View(lessons);
         }
 
         public IActionResult Privacy()
