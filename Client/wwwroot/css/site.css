@@ -1,22 +1,97 @@
+body {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    background-color: #F5F5F5;
+}
+
 html {
-  font-size: 14px;
+    font-size: 14px; /* Base font size */
+    font-family: 'Roboto Mono', monospace; /* Fallback font */
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px; /* Larger font size for bigger screens */
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+
+/*Layout*/
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    justify-content: center; 
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+
+.container1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
-body {
-  margin-bottom: 60px;
+.logo-container {
+    margin-right: 20px;
+}
+
+.text-container {
+    text-align: start;
+}
+
+.description {
+    text-align: center;
+    margin: 20px 0;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+/* Buttons */
+
+.btn-primary {
+    background-color: #fff;
+    color: #29335C;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    max-height: 50px;
+    max-width: auto;
+}
+    .btn-primary:hover {
+        background-color: #29335C;
+        color: #fff;
+    }
+
+
+.btn-secondary {
+    background-color: #29335C;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    max-height: 50px;
+    max-width: auto;
+}
+
+    .btn-secondary:hover {
+        background-color: #fff;
+        color: #29335C;
+    }
+
+.btn {
+    margin: 10px; /* Добавлено для создания отступа между кнопками */
+}
+/* Footer */
+
+.footer {
+    background-color: #29335C;
+    color: #fff;
 }
