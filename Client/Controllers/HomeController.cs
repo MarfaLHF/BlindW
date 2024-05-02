@@ -40,28 +40,28 @@ namespace Client.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> Register(RegisterModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
 
-            var result = await _userApiClient.RegisterUser(model);
+        //    var result = await _userApiClient.RegisterUser(model);
 
-            if (result.IsSuccess)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+        //    if (result.IsSuccess)
+        //    {
+        //        return RedirectToAction("Index", "Home");
+        //    }
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error);
-            }
+        //    foreach (var error in result.Errors)
+        //    {
+        //        ModelState.AddModelError(string.Empty, error);
+        //    }
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
     }
 }

@@ -28,7 +28,6 @@ html {
     justify-content: center; 
 }
 
-
 .container1 {
     display: flex;
     align-items: center;
@@ -89,9 +88,20 @@ html {
 .btn {
     margin: 10px; /* Добавлено для создания отступа между кнопками */
 }
+/*Text Printer*/
+.symbol {
+    color: #5C6B73;
+}
+.incorrectsymbol {
+    color: #DF2935
+}
+.correctsymbol {
+    color:#fff
+}
 /* Footer */
-
 .footer {
     background-color: #29335C;
     color: #fff;
 }
+
+

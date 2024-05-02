@@ -1,0 +1,42 @@
+﻿@model TextViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+<div>
+    @foreach (string word in Model.Text.Split(' '))
+    {
+        <div class="word active">
+            @foreach (char c in word)
+            {
+                <letter class="symbol">@c</letter>
+            }
+        </div>
+    }
+</div>
+
+<letter class="incorrectsymbol">c</letter>
+<letter class="correctsymbol">c</letter>
+<letter class="symbol">c</letter>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var text = '@Model.Text'.toLowerCase().split('');
+        var index = 0;
+
+        $(document).keypress(function (e) {
+            if (index < text.length) {
+                var key = String.fromCharCode(e.which).toLowerCase();
+                if (key == text[index]) {
+                    $('.symbol').eq(index).removeClass('incorrectsymbol').addClass('correctsymbol');
+                } else {
+                    $('.symbol').eq(index).removeClass('correctsymbol').addClass('incorrectsymbol');
+                }
+                index++;
+            }
+        });
+
+    });
+</script>
+
+
