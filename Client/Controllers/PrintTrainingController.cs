@@ -40,7 +40,7 @@ namespace Client.Controllers
         {
             return View();
         }
-            [HttpPost]
+        [HttpPost]
         public ActionResult Test(string userInput)
         {
             // Сохраняем введенный текст и время ввода в TempData
@@ -52,6 +52,9 @@ namespace Client.Controllers
 
         public ActionResult Result()
         {
+            // Получаем данные из TempData и передаем их в представление
+            ViewBag.UserInput = TempData["UserInput"];
+            ViewBag.InputTime = TempData["InputTime"];
             return View();
         }
 

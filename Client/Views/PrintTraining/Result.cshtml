@@ -1,9 +1,13 @@
-﻿<!-- Ваше представление Result -->
-@{
+﻿@{
     ViewBag.Title = "Result";
 }
 
-<h2>Ваш результат</h2>
+<h2>Результаты</h2>
 
-<p>Вы ввели: @ViewBag.UserInput</p>
+<p>Введенный текст: @ViewBag.UserInput</p>
 <p>Время ввода: @ViewBag.InputTime</p>
+<p id="typingTime">Время ввода (в секундах): </p>
+
+<script>
+    document.getElementById('typingTime').innerHTML += localStorage.getItem('typingTime');
+</script>
