@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlindW.Migrations
 {
     /// <inheritdoc />
-    public partial class migration_2024_24_04 : Migration
+    public partial class mig1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,19 +31,9 @@ namespace BlindW.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Discriminator = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    Username = table.Column<string>(type: "text", nullable: true),
-                    RegistrationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TestsTaken = table.Column<int>(type: "integer", nullable: true),
-                    TestsCompleted = table.Column<int>(type: "integer", nullable: true),
-                    BestResult15s = table.Column<int>(type: "integer", nullable: true),
-                    BestResult30s = table.Column<int>(type: "integer", nullable: true),
-                    BestResult60s = table.Column<int>(type: "integer", nullable: true),
-                    BestResult10Words = table.Column<int>(type: "integer", nullable: true),
-                    BestResult25Words = table.Column<int>(type: "integer", nullable: true),
-                    BestResult50Words = table.Column<int>(type: "integer", nullable: true),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Login = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -76,6 +66,23 @@ namespace BlindW.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Levels", x => x.LevelId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestResults",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TestResultId = table.Column<int>(type: "integer", nullable: false),
+                    TestDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Wpm = table.Column<int>(type: "integer", nullable: false),
+                    Accuracy = table.Column<decimal>(type: "numeric", nullable: false),
+                    NumCharacters = table.Column<int>(type: "integer", nullable: false),
+                    TotalTime = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestResults", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,29 +192,6 @@ namespace BlindW.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestResults",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    TestResultId = table.Column<int>(type: "integer", nullable: false),
-                    TestDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Wpm = table.Column<int>(type: "integer", nullable: false),
-                    Accuracy = table.Column<decimal>(type: "numeric", nullable: false),
-                    NumCharacters = table.Column<int>(type: "integer", nullable: false),
-                    TotalTime = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestResults", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TestResults_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Lessons",
                 columns: table => new
                 {
@@ -293,11 +277,6 @@ namespace BlindW.Migrations
                 name: "IX_Lessons_LevelId",
                 table: "Lessons",
                 column: "LevelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestResults_UserId",
-                table: "TestResults",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -328,13 +307,13 @@ namespace BlindW.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "TestResults");
 
             migrationBuilder.DropTable(
                 name: "Levels");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

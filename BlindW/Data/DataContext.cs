@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlindW.Data
 {
-    public class DataContext : IdentityDbContext
+    public class DataContext : IdentityDbContext<User>
     {
 
         private readonly IConfiguration _configuration;

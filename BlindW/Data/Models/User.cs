@@ -6,7 +6,7 @@ namespace BlindW.Data.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Username { get; set; }
+        public string Login { get; set; }
         public DateTime RegistrationDate { get; set; }
         public int TestsTaken { get; set; }
         public int TestsCompleted { get; set; }
@@ -19,5 +19,4 @@ namespace BlindW.Data.Models
 
         public virtual ICollection<TestResult> TestResults { get; set; }
     }
-
 }
