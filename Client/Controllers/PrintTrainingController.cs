@@ -8,7 +8,7 @@ namespace Client.Controllers
     {
         public async Task<ActionResult> Index()
         {
-            string Text = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+            string Text = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQQQQQQQQQQQQQ";
             TextViewModel textViewModel = await CountWordsAndCharacters(Text);
 
             return View(textViewModel);
@@ -43,16 +43,13 @@ namespace Client.Controllers
         [HttpPost]
         public ActionResult Test(string userInput)
         {
-            // Сохраняем введенный текст и время ввода в TempData
             TempData["UserInput"] = userInput;
             TempData["InputTime"] = DateTime.Now;
-            // Перенаправляем на другую страницу
             return RedirectToAction("Result");
         }
 
         public ActionResult Result()
         {
-            // Получаем данные из TempData и передаем их в представление
             ViewBag.UserInput = TempData["UserInput"];
             ViewBag.InputTime = TempData["InputTime"];
             return View();

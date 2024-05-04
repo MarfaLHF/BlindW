@@ -18,9 +18,6 @@ namespace Client.Controllers
 
         public async Task<IActionResult> Index() 
         {
-            //Пример получение записей
-            //var lessons = await _userApiClient.GetLessons();
-            //return View(lessons);
             return View();
         }
 
@@ -34,34 +31,5 @@ namespace Client.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        public async Task<IActionResult> Register()
-        {
-            return View();
-        }
-
-        //[HttpPost]
-        //public async Task<IActionResult> Register(RegisterModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(model);
-        //    }
-
-        //    var result = await _userApiClient.RegisterUser(model);
-
-        //    if (result.IsSuccess)
-        //    {
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-        //    foreach (var error in result.Errors)
-        //    {
-        //        ModelState.AddModelError(string.Empty, error);
-        //    }
-
-        //    return View(model);
-        //}
-
     }
 }

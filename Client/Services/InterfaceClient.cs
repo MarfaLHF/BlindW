@@ -36,6 +36,5 @@ namespace Client.Services
 
         [Post("/manage/info")]
         Task UpdateUserInfo(UserInfoUpdateRequest request);
-
     }
 }
