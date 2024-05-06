@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using BlindW.Data.Models;
+using BlindW.Controllers.Requests;
+
 
 namespace BlindW.Controllers
 {
@@ -18,20 +20,20 @@ namespace BlindW.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(string email, string password, string firstName, string lastName, string login)
+        [HttpPost("registration")]
+        public async Task<IActionResult> Register(UserRegistrationRequest model)
         {
             var user = new User
             {
-                UserName = email,
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName,
-                Login = login,
+                UserName = model.Email,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Login = model.Login,
                 RegistrationDate = DateTime.UtcNow
             };
 
-            var result = await _userManager.CreateAsync(user, password);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {

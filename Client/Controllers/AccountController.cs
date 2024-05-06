@@ -1,4 +1,5 @@
-﻿using Client.Models.Requests;
+﻿using BlindW.Data.Models;
+using Client.Models.Requests;
 using Client.Services;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
@@ -54,11 +55,6 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegistrationRequest model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
             try
             {
                 await _authService.Register(model);

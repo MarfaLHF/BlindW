@@ -1,4 +1,4 @@
-﻿namespace Client.Models.Requests
+﻿namespace BlindW.Controllers.Requests
 {
     public class UserRegistrationRequest
     {

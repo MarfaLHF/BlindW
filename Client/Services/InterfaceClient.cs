@@ -7,7 +7,7 @@ namespace Client.Services
 {
     public interface InterfaceClient
     {
-        [Post("/register")]
+        [Post("/Account/registration")]
         Task Register(UserRegistrationRequest request);
 
         [Post("/login")]
