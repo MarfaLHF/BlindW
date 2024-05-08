@@ -38,7 +38,17 @@ namespace Client.Controllers
             try
             {
                 var response = await _authService.Login(model);
-                return RedirectToAction("Index", "Home");
+
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Expires = DateTime.Now.AddDays(7), 
+                };
+                Response.Cookies.Append("UserAuthToken", response.AccessToken, cookieOptions);
+                Response.Cookies.Append("RefreshToken", response.RefreshToken, cookieOptions);
+
+                return RedirectToAction("Index", "Main");
             }
             catch (ApiException ex)
             {
@@ -46,6 +56,7 @@ namespace Client.Controllers
                 return View(model);
             }
         }
+
 
         public IActionResult Register()
         {
@@ -55,6 +66,10 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegistrationRequest model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
             try
             {
                 await _authService.Register(model);
