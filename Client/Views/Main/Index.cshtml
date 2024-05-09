@@ -6,16 +6,19 @@
 <div>
     @foreach (string word in Model.Text.Split(' '))
     {
-        <div class="word active">
+        <span class="word active">
             @foreach (char c in word)
             {
-                <letter class="symbol">@c</letter>
+                <span class="symbol">
+                    <letter>@c</letter>
+                </span>
             }
-        </div>
+            <span class="symbol">
+                <letter>ㅤ</letter>
+            </span>
+        </span>
     }
 </div>
-
-
 <script>
     $(document).ready(function () {
         var text = '@Model.Text'.toLowerCase().split('');
@@ -36,15 +39,13 @@
                 index++;
                 if (index == text.length) {
                     endTime = new Date();
-                    var timeDiff = endTime - startTime; // в миллисекундах
-                    timeDiff /= 1000; // в секундах
-                    // Сохраняем время ввода в localStorage или отправляем на сервер
+                    var timeDiff = endTime - startTime;
+                    timeDiff /= 1000;
                     localStorage.setItem('typingTime', timeDiff);
-                    // Перенаправляем на страницу с результатами
-                    window.location.href = '/PrintTraining/Result';
+                    window.location.href = '/Main/Result';
                 }
             }
-        });
 
+        });
     });
 </script>

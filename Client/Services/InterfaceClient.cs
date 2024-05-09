@@ -48,7 +48,7 @@ namespace Client.Services
         Task PutTestResult(string id, TestResult testResult);
 
         [Post("/api/TestResults")]
-        Task<TestResult> PostTestResult(Result testResult, string text);
+        Task<TestResult> PostTestResult(Result testResult);
 
         [Delete("/api/TestResults/{id}")]
         Task DeleteTestResult(string id);
