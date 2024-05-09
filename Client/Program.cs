@@ -1,4 +1,5 @@
 using Client.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,13 +9,14 @@ builder.Services
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7271"));
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "Cookie";
-    options.DefaultSignInScheme = "Cookie";
-    options.DefaultChallengeScheme = "Cookie";
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-    .AddCookie("Cookie", options =>
+    .AddCookie(options =>
     {
         options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
     });

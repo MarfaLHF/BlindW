@@ -36,5 +36,21 @@ namespace Client.Services
 
         [Post("/manage/info")]
         Task UpdateUserInfo(UserInfoUpdateRequest request);
+
+
+        [Get("/api/TestResults")]
+        Task<IEnumerable<TestResult>> GetTestResults();
+
+        [Get("/api/TestResults/{id}")]
+        Task<TestResult> GetTestResult(string id);
+
+        [Put("/api/TestResults/{id}")]
+        Task PutTestResult(string id, TestResult testResult);
+
+        [Post("/api/TestResults")]
+        Task<TestResult> PostTestResult(TestResult testResult);
+
+        [Delete("/api/TestResults/{id}")]
+        Task DeleteTestResult(string id);
     }
 }

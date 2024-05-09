@@ -1,8 +1,11 @@
 ﻿using BlindW.Data.Models;
 using Client.Models.Requests;
 using Client.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
@@ -39,14 +42,22 @@ namespace Client.Controllers
             {
                 var response = await _authService.Login(model);
 
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    Expires = DateTime.Now.AddDays(7), 
-                };
-                Response.Cookies.Append("UserAuthToken", response.AccessToken, cookieOptions);
-                Response.Cookies.Append("RefreshToken", response.RefreshToken, cookieOptions);
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, model.Email),
+                new Claim("AccessToken", response.AccessToken),
+                new Claim("RefreshToken", response.RefreshToken)
+            };
+
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties();
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
 
                 return RedirectToAction("Index", "Main");
             }

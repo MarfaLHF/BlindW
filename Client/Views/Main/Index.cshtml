@@ -1,5 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TextViewModel
+
 @{
+    ViewBag.Title = "Index";
 }
+<div>
+    @foreach (string word in Model.Text.Split(' '))
+    {
+        <div class="word active">
+            @foreach (char c in word)
+            {
+                <letter class="symbol">@c</letter>
+            }
+        </div>
+    }
+</div>
+
+<letter class="incorrectsymbol">c</letter>
+<letter class="correctsymbol">c</letter>
+<letter class="symbol">c</letter>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var text = '@Model.Text'.toLowerCase().split('');
+        var index = 0;
+        var startTime, endTime;
+
+        $(document).keypress(function (e) {
+            if (index < text.length) {
+                if (index == 0) {
+                    startTime = new Date();
+                }
+                var key = String.fromCharCode(e.which).toLowerCase();
+                if (key == text[index]) {
+                    $('.symbol').eq(index).removeClass('incorrectsymbol').addClass('correctsymbol');
+                } else {
+                    $('.symbol').eq(index).removeClass('correctsymbol').addClass('incorrectsymbol');
+                }
+                index++;
+                if (index == text.length) {
+                    endTime = new Date();
+                    var timeDiff = endTime - startTime; // в миллисекундах
+                    timeDiff /= 1000; // в секундах
+                    // Сохраняем время ввода в localStorage или отправляем на сервер
+                    localStorage.setItem('typingTime', timeDiff);
+                    // Перенаправляем на страницу с результатами
+                    window.location.href = '/PrintTraining/Result';
+                }
+            }
+        });
+
+    });
+</script>
