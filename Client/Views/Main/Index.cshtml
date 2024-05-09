@@ -41,11 +41,26 @@
                     endTime = new Date();
                     var timeDiff = endTime - startTime;
                     timeDiff /= 1000;
-                    localStorage.setItem('typingTime', timeDiff);
-                    window.location.href = '/Main/Result';
+                    var typingTime = timeDiff;
+                    var correctSymbols = $('.correctsymbol').length;
+                    var accuracy = correctSymbols / text.length * 100;
+
+                    $.ajax({
+                        url: '/Main/Result',
+                        type: 'POST',
+                        data: {
+                            'totalTime': typingTime,
+                            'countCharacters': text.length,
+                            'correctSymbols': correctSymbols,
+                            'accuracy': accuracy
+                        },
+                        success: function () {
+                            window.location.href = '/Main/Result';
+                        }
+                    });
                 }
             }
-
         });
     });
+
 </script>
