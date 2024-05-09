@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BlindW.Data;
 using BlindW.Data.Models;
+using BlindW.Controllers.Requests;
 
 namespace BlindW.Controllers
 {
@@ -30,7 +31,7 @@ namespace BlindW.Controllers
 
         // GET: api/TestResults/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TestResult>> GetTestResult(string id)
+        public async Task<ActionResult<TestResult>> GetTestResult(int id)
         {
             var testResult = await _context.TestResults.FindAsync(id);
 
@@ -45,9 +46,9 @@ namespace BlindW.Controllers
         // PUT: api/TestResults/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTestResult(string id, TestResult testResult)
+        public async Task<IActionResult> PutTestResult(int id, TestResult testResult)
         {
-            if (id != testResult.Id)
+            if (id != testResult.TestResultId)
             {
                 return BadRequest();
             }
@@ -76,31 +77,29 @@ namespace BlindW.Controllers
         // POST: api/TestResults
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TestResult>> PostTestResult(TestResult testResult)
+        public async Task<ActionResult<TestResult>> PostTestResult(Result testResult, string text)
         {
-            _context.TestResults.Add(testResult);
-            try
+            var result = new TestResult
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TestResultExists(testResult.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                UserId = testResult.UserId,
+                TestSettingId = testResult.TestSettingId,
+                TestDateTime = DateTime.UtcNow,
+                CountCharacters = testResult.CountCharacters,
+                TotalTime = testResult.TotalTime,
+                Wpm = testResult.Wpm,
+                Accuracy = testResult.Accuracy
 
-            return CreatedAtAction("GetTestResult", new { id = testResult.Id }, testResult);
+            };
+            _context.TestResults.Add(result);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetTestResult", new { id = testResult.TestResultId }, testResult);
         }
+
 
         // DELETE: api/TestResults/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTestResult(string id)
+        public async Task<IActionResult> DeleteTestResult(int id)
         {
             var testResult = await _context.TestResults.FindAsync(id);
             if (testResult == null)
@@ -114,9 +113,9 @@ namespace BlindW.Controllers
             return NoContent();
         }
 
-        private bool TestResultExists(string id)
+        private bool TestResultExists(int id)
         {
-            return _context.TestResults.Any(e => e.Id == id);
+            return _context.TestResults.Any(e => e.TestResultId == id);
         }
     }
 }

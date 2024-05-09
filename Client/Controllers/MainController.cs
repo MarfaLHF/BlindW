@@ -13,13 +13,17 @@ namespace Client.Controllers
         {
             _apiService = apiService;
         }
-        [Authorize] 
         public async Task<ActionResult> Index()
         {
-            string Text = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQQQQQQQQQQQQQ";
+            string Text = "qwerty qwerty";
             TextViewModel textViewModel = await CountWordsAndCharacters(Text);
-            
+
             return View(textViewModel);
+        }
+        
+        public ActionResult Result()
+        {
+            return View();
         }
         public async Task<TextViewModel> CountWordsAndCharacters(string text)
         {
@@ -42,36 +46,6 @@ namespace Client.Controllers
                 };
                 return textViewModel;
             });
-        }
-        private double CalculateWpm(string text, int wordCount, double minutes)
-        {
-            double averageWordLength = 7.2;
-            double adjustedCharCount = text.Length - (wordCount * (averageWordLength - 1));
-
-            double wpm = (adjustedCharCount / wordCount) * 60 / minutes;
-            return Math.Round(wpm, 2);
-        }
-        private double CalculateAccuracy(string userInput, string referenceText)
-        {
-            int matchedCharacters = 0;
-            int minLength = Math.Min(userInput.Length, referenceText.Length);
-
-            for (int i = 0; i < minLength; i++)
-            {
-                if (userInput[i] == referenceText[i])
-                {
-                    matchedCharacters++;
-                }
-            }
-
-            double accuracy = (matchedCharacters / (double)minLength) * 100;
-            return Math.Round(accuracy, 2); 
-        }
-        public ActionResult Result()
-        {
-            ViewBag.UserInput = TempData["UserInput"];
-            ViewBag.InputTime = TempData["InputTime"];
-            return View();
         }
     }
 }

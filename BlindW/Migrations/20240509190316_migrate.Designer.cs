@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlindW.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240504150110_mig1")]
-    partial class mig1
+    [Migration("20240509190316_migrate")]
+    partial class migrate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,12 +40,9 @@ namespace BlindW.Migrations
                     b.Property<int>("TestResultId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TestResultId1")
-                        .HasColumnType("text");
-
                     b.HasKey("LeaderboardId");
 
-                    b.HasIndex("TestResultId1");
+                    b.HasIndex("TestResultId");
 
                     b.ToTable("Leaderboards");
                 });
@@ -93,32 +90,110 @@ namespace BlindW.Migrations
                     b.ToTable("Levels");
                 });
 
+            modelBuilder.Entity("BlindW.Data.Models.TestDuration", b =>
+                {
+                    b.Property<int>("TestDurationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TestDurationId"));
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TestDurationId");
+
+                    b.ToTable("TestDurations");
+                });
+
             modelBuilder.Entity("BlindW.Data.Models.TestResult", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<int>("TestResultId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-                    b.Property<decimal>("Accuracy")
-                        .HasColumnType("numeric");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TestResultId"));
 
-                    b.Property<int>("NumCharacters")
+                    b.Property<double>("Accuracy")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("CountCharacters")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("TestDateTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("TestResultId")
+                    b.Property<int>("TestSettingId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TotalTime")
-                        .HasColumnType("integer");
+                    b.Property<double>("TotalTime")
+                        .HasColumnType("double precision");
 
-                    b.Property<int>("Wpm")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.Property<double>("Wpm")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("TestResultId");
+
+                    b.HasIndex("TestSettingId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TestResults");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestSetting", b =>
+                {
+                    b.Property<int>("TestSettingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TestSettingId"));
+
+                    b.Property<bool>("IsNumbersEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPunctuationEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TestDurationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TestTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WordCountId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TestSettingId");
+
+                    b.HasIndex("TestDurationId");
+
+                    b.HasIndex("TestTypeId");
+
+                    b.HasIndex("WordCountId");
+
+                    b.ToTable("TestSettings");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestType", b =>
+                {
+                    b.Property<int>("TestTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TestTypeId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("TestTypeId");
+
+                    b.ToTable("TestTyps");
                 });
 
             modelBuilder.Entity("BlindW.Data.Models.User", b =>
@@ -127,6 +202,24 @@ namespace BlindW.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BestResult10Words")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BestResult15s")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BestResult25Words")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BestResult30s")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BestResult50Words")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BestResult60s")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -175,8 +268,17 @@ namespace BlindW.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
+
+                    b.Property<int>("TestsCompleted")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TestsTaken")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -195,6 +297,22 @@ namespace BlindW.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.WordCount", b =>
+                {
+                    b.Property<int>("WordCountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("WordCountId"));
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.HasKey("WordCountId");
+
+                    b.ToTable("WordCounts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -333,7 +451,9 @@ namespace BlindW.Migrations
                 {
                     b.HasOne("BlindW.Data.Models.TestResult", "TestResult")
                         .WithMany()
-                        .HasForeignKey("TestResultId1");
+                        .HasForeignKey("TestResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("TestResult");
                 });
@@ -347,6 +467,52 @@ namespace BlindW.Migrations
                         .IsRequired();
 
                     b.Navigation("Level");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestResult", b =>
+                {
+                    b.HasOne("BlindW.Data.Models.TestSetting", "TestSetting")
+                        .WithMany("TestResult")
+                        .HasForeignKey("TestSettingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlindW.Data.Models.User", "User")
+                        .WithMany("TestResults")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TestSetting");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestSetting", b =>
+                {
+                    b.HasOne("BlindW.Data.Models.TestDuration", "TestDuration")
+                        .WithMany("TestSetting")
+                        .HasForeignKey("TestDurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlindW.Data.Models.TestType", "TestType")
+                        .WithMany("TestSetting")
+                        .HasForeignKey("TestTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlindW.Data.Models.WordCount", "WordCount")
+                        .WithMany("TestSetting")
+                        .HasForeignKey("WordCountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TestDuration");
+
+                    b.Navigation("TestType");
+
+                    b.Navigation("WordCount");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -403,6 +569,31 @@ namespace BlindW.Migrations
             modelBuilder.Entity("BlindW.Data.Models.Level", b =>
                 {
                     b.Navigation("Lessons");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestDuration", b =>
+                {
+                    b.Navigation("TestSetting");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestSetting", b =>
+                {
+                    b.Navigation("TestResult");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.TestType", b =>
+                {
+                    b.Navigation("TestSetting");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.User", b =>
+                {
+                    b.Navigation("TestResults");
+                });
+
+            modelBuilder.Entity("BlindW.Data.Models.WordCount", b =>
+                {
+                    b.Navigation("TestSetting");
                 });
 #pragma warning restore 612, 618
         }

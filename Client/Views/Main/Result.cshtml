@@ -1,14 +1,16 @@
-﻿@{
+﻿@model Result
+
+@{
     ViewBag.Title = "Result";
 }
 
-<h2>Результаты</h2>
-
-<p>Введенный текст: @ViewBag.UserInput</p>
-<p>Время ввода: @ViewBag.InputTime</p>
-<p id="typingTime">Время ввода (в секундах): </p>
-<a asp-action="Register" asp-controller="Account" class="btn btn-primary">Пройти тест</a>
-
-<script>
-    document.getElementById('typingTime').innerHTML += localStorage.getItem('typingTime');
-</script>
+<div>
+    <h2>Результаты теста</h2>
+    <p>TestResultId: @Model.TestResultId</p>
+    <p>UserId: @Model.UserId</p>
+    <p>TestSettingId: @Model.TestSettingId</p>
+    <p>CountCharacters: @Model.CountCharacters</p>
+    <p>TotalTime: @Model.TotalTime</p>
+    <p>Wpm: @Model.Wpm</p>
+    <p>Accuracy: @Model.Accuracy</p>
+</div>

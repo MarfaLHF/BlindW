@@ -8,7 +8,7 @@ namespace Client.Controllers
     {
         public async Task<ActionResult> Index()
         {
-            string Text = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQQQQQQQQQQQQQ";
+            string Text = "qqqq qqqqqqqqqqqqqq qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQQQQQQQQQQQQQ";
             TextViewModel textViewModel = await CountWordsAndCharacters(Text);
 
             return View(textViewModel);

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlindW.Migrations
 {
     /// <inheritdoc />
-    public partial class mig1 : Migration
+    public partial class migrate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,6 +34,15 @@ namespace BlindW.Migrations
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     Login = table.Column<string>(type: "text", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TestsTaken = table.Column<int>(type: "integer", nullable: false),
+                    TestsCompleted = table.Column<int>(type: "integer", nullable: false),
+                    BestResult15s = table.Column<int>(type: "integer", nullable: false),
+                    BestResult30s = table.Column<int>(type: "integer", nullable: false),
+                    BestResult60s = table.Column<int>(type: "integer", nullable: false),
+                    BestResult10Words = table.Column<int>(type: "integer", nullable: false),
+                    BestResult25Words = table.Column<int>(type: "integer", nullable: false),
+                    BestResult50Words = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -69,20 +78,42 @@ namespace BlindW.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestResults",
+                name: "TestDurations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    TestResultId = table.Column<int>(type: "integer", nullable: false),
-                    TestDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Wpm = table.Column<int>(type: "integer", nullable: false),
-                    Accuracy = table.Column<decimal>(type: "numeric", nullable: false),
-                    NumCharacters = table.Column<int>(type: "integer", nullable: false),
-                    TotalTime = table.Column<int>(type: "integer", nullable: false)
+                    TestDurationId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Duration = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TestResults", x => x.Id);
+                    table.PrimaryKey("PK_TestDurations", x => x.TestDurationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestTyps",
+                columns: table => new
+                {
+                    TestTypeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestTyps", x => x.TestTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WordCounts",
+                columns: table => new
+                {
+                    WordCountId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Count = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WordCounts", x => x.WordCountId);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,23 +243,89 @@ namespace BlindW.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TestSettings",
+                columns: table => new
+                {
+                    TestSettingId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IsPunctuationEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    IsNumbersEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    TestTypeId = table.Column<int>(type: "integer", nullable: false),
+                    WordCountId = table.Column<int>(type: "integer", nullable: false),
+                    TestDurationId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestSettings", x => x.TestSettingId);
+                    table.ForeignKey(
+                        name: "FK_TestSettings_TestDurations_TestDurationId",
+                        column: x => x.TestDurationId,
+                        principalTable: "TestDurations",
+                        principalColumn: "TestDurationId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TestSettings_TestTyps_TestTypeId",
+                        column: x => x.TestTypeId,
+                        principalTable: "TestTyps",
+                        principalColumn: "TestTypeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TestSettings_WordCounts_WordCountId",
+                        column: x => x.WordCountId,
+                        principalTable: "WordCounts",
+                        principalColumn: "WordCountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestResults",
+                columns: table => new
+                {
+                    TestResultId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    TestSettingId = table.Column<int>(type: "integer", nullable: false),
+                    TestDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CountCharacters = table.Column<int>(type: "integer", nullable: false),
+                    TotalTime = table.Column<double>(type: "double precision", nullable: false),
+                    Wpm = table.Column<double>(type: "double precision", nullable: false),
+                    Accuracy = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestResults", x => x.TestResultId);
+                    table.ForeignKey(
+                        name: "FK_TestResults_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TestResults_TestSettings_TestSettingId",
+                        column: x => x.TestSettingId,
+                        principalTable: "TestSettings",
+                        principalColumn: "TestSettingId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Leaderboards",
                 columns: table => new
                 {
                     LeaderboardId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TestResultId = table.Column<int>(type: "integer", nullable: false),
-                    RankingType = table.Column<string>(type: "text", nullable: false),
-                    TestResultId1 = table.Column<string>(type: "text", nullable: true)
+                    RankingType = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Leaderboards", x => x.LeaderboardId);
                     table.ForeignKey(
-                        name: "FK_Leaderboards_TestResults_TestResultId1",
-                        column: x => x.TestResultId1,
+                        name: "FK_Leaderboards_TestResults_TestResultId",
+                        column: x => x.TestResultId,
                         principalTable: "TestResults",
-                        principalColumn: "Id");
+                        principalColumn: "TestResultId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -269,14 +366,39 @@ namespace BlindW.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Leaderboards_TestResultId1",
+                name: "IX_Leaderboards_TestResultId",
                 table: "Leaderboards",
-                column: "TestResultId1");
+                column: "TestResultId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lessons_LevelId",
                 table: "Lessons",
                 column: "LevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestResults_TestSettingId",
+                table: "TestResults",
+                column: "TestSettingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestResults_UserId",
+                table: "TestResults",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestSettings_TestDurationId",
+                table: "TestSettings",
+                column: "TestDurationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestSettings_TestTypeId",
+                table: "TestSettings",
+                column: "TestTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestSettings_WordCountId",
+                table: "TestSettings",
+                column: "WordCountId");
         }
 
         /// <inheritdoc />
@@ -307,13 +429,25 @@ namespace BlindW.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "TestResults");
 
             migrationBuilder.DropTable(
                 name: "Levels");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "TestSettings");
+
+            migrationBuilder.DropTable(
+                name: "TestDurations");
+
+            migrationBuilder.DropTable(
+                name: "TestTyps");
+
+            migrationBuilder.DropTable(
+                name: "WordCounts");
         }
     }
 }
