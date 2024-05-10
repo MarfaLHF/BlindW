@@ -11,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<User>()
     .AddEntityFrameworkStores<DataContext>();

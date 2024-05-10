@@ -2,6 +2,7 @@
 using Client.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
@@ -13,43 +14,46 @@ namespace Client.Controllers
         {
             _apiService = apiService;
         }
+        [Authorize]
         public async Task<ActionResult> Index()
         {
-            string Text = "qwerty qwerty";
+            string Text = "";
             TextViewModel textViewModel = await CountWordsAndCharacters(Text);
 
             return View(textViewModel);
         }
-        
+        [Authorize]
         public ActionResult Result()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Result(double totalTime, int countCharacters, int correctSymbols, double accuracy)
+        public async Task<ActionResult> Result(double totalTime, int countCharacters, int correctSymbols)
         {
-            // Получаем данные из localStorage
-            string userId = "d3e12834-f4d6-4e20-9df1-e6884b7284fb"; // Замените на ваш UserId
-            int testSettingId = 0; // Замените на ваш TestSettingId
-            double wpm = (countCharacters / 5) / (totalTime / 60);
 
+            var user = await _apiService.GetUserByEmail(User.FindFirst(ClaimTypes.Name).Value);
+
+            int testSettingId = 0; // Заменить на ваш TestSettingId
+            double wpm = Math.Round((countCharacters / 5.0) / (totalTime / 60.0));
+            double accuracy = Math.Round((double)correctSymbols / countCharacters * 100);
+            totalTime = Math.Round(totalTime / 1000); 
             // Создаем новый объект Result
             Result result = new Result
             {
-                UserId = userId,
+                //UserId = user.Id,
                 TestSettingId = testSettingId,
-                CountCharacters = 1,
-                TotalTime = 1,
-                Wpm = 1,
-                Accuracy = 1
+                CountCharacters = countCharacters,
+                TotalTime = totalTime,
+                Wpm = wpm,
+                Accuracy = accuracy
             };
 
-            // Сохраняем результат в базе данных
             _apiService.PostTestResult(result);
 
             return View(result);
         }
+
 
         public async Task<TextViewModel> CountWordsAndCharacters(string text)
         {

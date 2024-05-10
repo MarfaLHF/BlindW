@@ -43,5 +43,18 @@ namespace BlindW.Controllers
 
             return BadRequest(result.Errors);
         }
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                return Ok(user);
+            }
+
+            return NotFound();
+        }
+
     }
 }

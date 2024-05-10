@@ -46,7 +46,7 @@ namespace Client.Controllers
             {
                 new Claim(ClaimTypes.Name, model.Email),
                 new Claim("AccessToken", response.AccessToken),
-                new Claim("RefreshToken", response.RefreshToken)
+                new Claim("RefreshToken", response.RefreshToken),
             };
 
                 var claimsIdentity = new ClaimsIdentity(

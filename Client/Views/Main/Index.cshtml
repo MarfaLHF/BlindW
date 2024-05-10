@@ -40,10 +40,8 @@
                 if (index == text.length) {
                     endTime = new Date();
                     var timeDiff = endTime - startTime;
-                    timeDiff /= 1000;
                     var typingTime = timeDiff;
                     var correctSymbols = $('.correctsymbol').length;
-                    var accuracy = correctSymbols / text.length * 100;
 
                     $.ajax({
                         url: '/Main/Result',
@@ -52,7 +50,6 @@
                             'totalTime': typingTime,
                             'countCharacters': text.length,
                             'correctSymbols': correctSymbols,
-                            'accuracy': accuracy
                         },
                         success: function () {
                             window.location.href = '/Main/Result';

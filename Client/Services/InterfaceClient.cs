@@ -9,6 +9,8 @@ namespace Client.Services
     {
         [Post("/Account/registration")]
         Task Register(UserRegistrationRequest request);
+        [Get("/Account/user")]
+        Task<User> GetUserByEmail(string email);    
 
         [Post("/login")]
         Task<AuthResponse> Login(UserLoginRequest request);
