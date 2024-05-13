@@ -1,6 +1,75 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Политика конфиденциальности";
 }
+
+
+<script>
+    const modeItems = document.querySelectorAll('.mode-item');
+    const valueItems = document.querySelectorAll('.value-item');
+    const indicator = document.querySelector('.indicator');
+
+    function showValuesList(mode) {
+        const list = document.querySelector(`.${mode}-list`);
+        list.style.display = 'flex';
+        const otherList = mode === 'words' ? '.time-list' : '.words-list';
+        document.querySelector(otherList).style.display = 'none';
+    }
+
+    function updateIndicator(value) {
+        const activeItem = document.querySelector(`.value-item[data-value="${value}"]`);
+        indicator.style.left = `${activeItem.offsetLeft}px`;
+    }
+
+    modeItems.forEach(item => {
+        item.addEventListener('click', () => {
+            currentMode = item.getAttribute('data-mode');
+            showValuesList(currentMode);
+        });
+    });
+
+    valueItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const value = item.getAttribute('data-value');
+            updateIndicator(value);
+        });
+    });
+
+    // Инициализация начального состояния
+    showValuesList(currentMode);
+    const activeValueItem = document.querySelector(`.value-item[data-value="25"]`); // Установить начальное значение для слов
+    indicator.style.left = `${activeValueItem.offsetLeft}px`;
+</script>
+@* @{
+    ViewData["Title"] = "Политика конфиденциальности";
+}
+
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <p>Это политика конфиденциальности Blind Typing by Marfa (далее – «Сайт»). Мы стремимся защищать конфиденциальность наших пользователей.</p>
+            <p>Эта политика объясняет, как мы собираем, используем, раскрываем и защищаем вашу личную информацию, когда вы используете наш сайт.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <h2>Связь:</h2>
+        <div class="col-md-6">
+            <p>Мы можем собирать следующую информацию о вас:</p>
+            <ul class="list-inline">
+                <li>
+                    <a href="https://github.com/MarfaLHF" target="_blank">
+                        <img alt="GitHub" class="fa-lg" style="width: 50px; height: 50px;" src="https://fontawesome.com/icons/github">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://t.me/marfaLHF" target="_blank">
+                        <img alt="Telegram" class="fa-lg" style="width: 50px; height: 50px;" src="https://fontawesome.com/v4/icon/telegram">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+ *@

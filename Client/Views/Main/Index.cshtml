@@ -3,22 +3,122 @@
 @{
     ViewBag.Title = "Index";
 }
-<div>
-    @foreach (string word in Model.Text.Split(' '))
-    {
-        <span class="word active">
-            @foreach (char c in word)
-            {
-                <span class="symbol">
-                    <letter>@c</letter>
-                </span>
-            }
-            <span class="symbol">
-                <letter>ㅤ</letter>
-            </span>
-        </span>
+<style>
+    .level-selector {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #333;
+        border-radius: 5px;
     }
+
+    .title {
+        color: #fff;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .mode-selector {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mode-item {
+        display: inline-block;
+        margin-right: 10px;
+        padding: 5px 10px;
+        background-color: #555;
+        color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .mode-item:hover {
+            background-color: #777;
+        }
+
+    .values {
+        display: flex;
+        margin-left: 10px;
+    }
+
+    .words-list, .time-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: none;
+    }
+
+    .value-item {
+        display: inline-block;
+        margin-right: 10px;
+        padding: 5px 10px;
+        background-color: #555;
+        color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .value-item:hover {
+            background-color: #777;
+        }
+
+    .indicator {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background-color: #007bff;
+        border-radius: 50%;
+    }
+
+</style>
+<div class="level-selector">
+    <span class="title">Тип</span>
+    <ul class="mode-selector">
+        <li class="mode-item" data-mode="words">Слова</li>
+        <li class="mode-item" data-mode="time">Время</li>
+    </ul>
+    <div class="values">
+        <ul class="words-list">
+            <li class="value-item" data-value="25">25</li>
+            <li class="value-item" data-value="50">50</li>
+        </ul>
+        <ul class="time-list">
+            <li class="value-item" data-value="15">15</li>
+            <li class="value-item" data-value="30">30</li>
+            <li class="value-item" data-value="60">60</li>
+        </ul>
+    </div>
+    <span class="indicator"></span>
 </div>
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <div class="text_container">
+        @foreach (string word in Model.Text.Split(' '))
+        {
+            <span class="word_active">
+                @foreach (char c in word)
+                {
+                    <span class="symbol">
+                        <letter>@c</letter>
+                    </span>
+                }
+                <span class="symbol">
+                    <letter>ㅤ</letter>
+                </span>
+            </span>
+        }
+    </div>
+    <button id="refresh">
+        <img alt="Update Icon" class="fa-lg" src="~/images/icon-update.svg">
+    </button>
+</div>
+
 <script>
     $(document).ready(function () {
         var text = '@Model.Text'.toLowerCase().split('');
@@ -58,6 +158,53 @@
                 }
             }
         });
+
+        $(document).keydown(function (e) {
+            if (e.which == 8) {
+                if (index > 0) {
+                    index--;
+                    $('.symbol').eq(index).removeClass('correctsymbol incorrectsymbol');
+                }
+                e.preventDefault();
+            }
+        });
+
+        $("#refresh").click(function () {
+            location.reload();
+        });
+    });
+     const modeItems = document.querySelectorAll('.mode-item');
+    const valueItems = document.querySelectorAll('.value-item');
+    const indicator = document.querySelector('.indicator');
+
+    function showValuesList(mode) {
+        const list = document.querySelector(`.${mode}-list`);
+        list.style.display = 'flex';
+        const otherList = mode === 'words' ? '.time-list' : '.words-list';
+        document.querySelector(otherList).style.display = 'none';
+    }
+
+    function updateIndicator(value) {
+        const activeItem = document.querySelector(`.value-item[data-value="${value}"]`);
+        indicator.style.left = `${activeItem.offsetLeft}px`;
+    }
+
+    modeItems.forEach(item => {
+        item.addEventListener('click', () => {
+            currentMode = item.getAttribute('data-mode');
+            showValuesList(currentMode);
+        });
     });
 
+    valueItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const value = item.getAttribute('data-value');
+            updateIndicator(value);
+        });
+    });
+
+    // Инициализация начального состояния
+    showValuesList(currentMode);
+    const activeValueItem = document.querySelector(`.value-item[data-value="25"]`); // Установить начальное значение для слов
+    indicator.style.left = `${activeValueItem.offsetLeft}px`;
 </script>

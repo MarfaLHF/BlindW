@@ -1,24 +1,29 @@
-﻿@model TextViewModel
+﻿    @model TextViewModel
 
 @{
     ViewBag.Title = "Index";
 }
-<div>
-    @foreach (string word in Model.Text.Split(' '))
-    {
-        <div class="word active">
-            @foreach (char c in word)
-            {
-                <letter class="symbol">@c</letter>
-            }
-        </div>
-    }
+
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <div class="text_container">
+        @foreach (string word in Model.Text.Split(' '))
+        {
+            <span class="word_active">
+                @foreach (char c in word)
+                {
+                    <span class="symbol">
+                        <letter>@c</letter>
+                    </span>
+                }
+                <span class="symbol">
+                    <letter>ㅤ</letter>
+                </span>
+            </span>
+        }
+    </div>
 </div>
 
-<letter class="incorrectsymbol">c</letter>
-<letter class="correctsymbol">c</letter>
-<letter class="symbol">c</letter>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         var text = '@Model.Text'.toLowerCase().split('');
@@ -39,15 +44,72 @@
                 index++;
                 if (index == text.length) {
                     endTime = new Date();
-                    var timeDiff = endTime - startTime; // в миллисекундах
-                    timeDiff /= 1000; // в секундах
-                    // Сохраняем время ввода в localStorage или отправляем на сервер
-                    localStorage.setItem('typingTime', timeDiff);
-                    // Перенаправляем на страницу с результатами
-                    window.location.href = '/PrintTraining/Result';
+                    var timeDiff = endTime - startTime;
+                    var typingTime = timeDiff;
+                    var correctSymbols = $('.correctsymbol').length;
+
+                    $.ajax({
+                        url: '/PrintTraining/Resultate',
+                        type: 'POST',
+                        data: {
+                            'totalTime': typingTime,
+                            'countCharacters': text.length,
+                            'correctSymbols': correctSymbols,
+                        },
+                        success: function () {
+                            window.location.href = '/PrintTraining/Resultate';
+                        }
+                    });
                 }
             }
         });
 
+        $(document).keydown(function (e) {
+            if (e.which == 8) {
+                if (index > 0) {
+                    index--;
+                    $('.symbol').eq(index).removeClass('correctsymbol incorrectsymbol');
+                }
+                e.preventDefault();
+            }
+        });
+
+        $("#refresh").click(function () {
+            location.reload();
+        });
     });
+    const modeItems = document.querySelectorAll('.mode-item');
+    const valueItems = document.querySelectorAll('.value-item');
+    const indicator = document.querySelector('.indicator');
+
+    function showValuesList(mode) {
+        const list = document.querySelector(`.${mode}-list`);
+        list.style.display = 'flex';
+        const otherList = mode === 'words' ? '.time-list' : '.words-list';
+        document.querySelector(otherList).style.display = 'none';
+    }
+
+    function updateIndicator(value) {
+        const activeItem = document.querySelector(`.value-item[data-value="${value}"]`);
+        indicator.style.left = `${activeItem.offsetLeft}px`;
+    }
+
+    modeItems.forEach(item => {
+        item.addEventListener('click', () => {
+            currentMode = item.getAttribute('data-mode');
+            showValuesList(currentMode);
+        });
+    });
+
+    valueItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const value = item.getAttribute('data-value');
+            updateIndicator(value);
+        });
+    });
+
+    // Инициализация начального состояния
+    showValuesList(currentMode);
+    const activeValueItem = document.querySelector(`.value-item[data-value="25"]`); // Установить начальное значение для слов
+    indicator.style.left = `${activeValueItem.offsetLeft}px`;
 </script>

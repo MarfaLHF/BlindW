@@ -2,6 +2,7 @@
 using Client.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Client.Controllers
@@ -15,33 +16,35 @@ namespace Client.Controllers
             _apiService = apiService;
         }
         [Authorize]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int wordCount = 25)
         {
-            string Text = "";
+            string jsonResponse = await _apiService.GetRandomText(wordCount); // Передайте wordCount в GetRandomText
+            List<string> words = JsonConvert.DeserializeObject<List<string>>(jsonResponse);
+            string Text = string.Join(" ", words);
             TextViewModel textViewModel = await CountWordsAndCharacters(Text);
 
             return View(textViewModel);
         }
+
         [Authorize]
         public ActionResult Result()
         {
             return View();
-        }
+        }  
 
         [HttpPost]
         public async Task<ActionResult> Result(double totalTime, int countCharacters, int correctSymbols)
         {
-
             var user = await _apiService.GetUserByEmail(User.FindFirst(ClaimTypes.Name).Value);
 
             int testSettingId = 0; // Заменить на ваш TestSettingId
             double wpm = Math.Round((countCharacters / 5.0) / (totalTime / 60.0));
             double accuracy = Math.Round((double)correctSymbols / countCharacters * 100);
-            totalTime = Math.Round(totalTime / 1000); 
-            // Создаем новый объект Result
+            totalTime = Math.Round(totalTime / 1000);
+
             Result result = new Result
             {
-                //UserId = user.Id,
+                UserId = user.Id,
                 TestSettingId = testSettingId,
                 CountCharacters = countCharacters,
                 TotalTime = totalTime,

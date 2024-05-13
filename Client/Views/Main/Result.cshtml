@@ -1,20 +1,8 @@
-﻿@{
-    ViewBag.Title = "Result";
-}
+﻿@model Client.Models.Result
 
 <h2>Результаты</h2>
-
-<p>Введенный текст: @ViewBag.UserInput</p>
-<p>Время ввода: @ViewBag.InputTime</p>
-<p id="typingTime">Время ввода (в секундах): </p>
-<p id="countCharacters">Количество символов: </p>
-<p id="correctSymbols">Количество правильно введенных символов: </p>
-<p id="accuracy">Точность (%): </p>
-<a asp-action="Register" asp-controller="Account" class="btn btn-primary">Пройти тест</a>
-
-<script>
-    document.getElementById('typingTime').innerHTML += localStorage.getItem('typingTime');
-    document.getElementById('countCharacters').innerHTML += localStorage.getItem('countCharacters');
-    document.getElementById('correctSymbols').innerHTML += localStorage.getItem('correctSymbols');
-    document.getElementById('accuracy').innerHTML += localStorage.getItem('accuracy');
-</script>
+@* 
+<p>Общее время: @Model.TotalTime</p>
+<p>Количество символов: @Model.CountCharacters</p>
+<p>Скорость ввода: @Model.Wpm</p>
+<p>Точность: @Model.Accuracy</p> *@

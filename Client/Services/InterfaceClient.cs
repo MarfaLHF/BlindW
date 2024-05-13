@@ -54,5 +54,8 @@ namespace Client.Services
 
         [Delete("/api/TestResults/{id}")]
         Task DeleteTestResult(string id);
+
+        [Get("/api/GetText/randomText")]
+        Task<string> GetRandomText(int wordCount);
     }
 }

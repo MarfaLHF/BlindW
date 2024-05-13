@@ -8,11 +8,11 @@ namespace BlindW.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GetText : ControllerBase
+    public class GetTextController : ControllerBase
     {
         private readonly HttpClient _client;
 
-        public GetText(HttpClient client)
+        public GetTextController(HttpClient client)
         {
             _client = client;
         }
