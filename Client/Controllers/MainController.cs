@@ -1,5 +1,7 @@
 ﻿using Client.Models;
 using Client.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,10 +17,11 @@ namespace Client.Controllers
         {
             _apiService = apiService;
         }
+
         [Authorize]
         public async Task<ActionResult> Index(int wordCount = 25)
         {
-            string jsonResponse = await _apiService.GetRandomText(wordCount); // Передайте wordCount в GetRandomText
+            string jsonResponse = await _apiService.GetRandomText(15);
             List<string> words = JsonConvert.DeserializeObject<List<string>>(jsonResponse);
             string Text = string.Join(" ", words);
             TextViewModel textViewModel = await CountWordsAndCharacters(Text);
@@ -26,11 +29,16 @@ namespace Client.Controllers
             return View(textViewModel);
         }
 
-        [Authorize]
         public ActionResult Result()
         {
-            return View();
-        }  
+            if (TempData["Result"] != null)
+            {
+                var result = JsonConvert.DeserializeObject<Result>(TempData["Result"].ToString());
+                return View(result);
+            }
+
+            return View(new Result()); // Возвращаем пустую модель, чтобы избежать null reference
+        }
 
         [HttpPost]
         public async Task<ActionResult> Result(double totalTime, int countCharacters, int correctSymbols)
@@ -52,11 +60,12 @@ namespace Client.Controllers
                 Accuracy = accuracy
             };
 
-            _apiService.PostTestResult(result);
+            await _apiService.PostTestResult(result);
 
-            return View(result);
+            TempData["Result"] = JsonConvert.SerializeObject(result);
+
+            return RedirectToAction("Result");
         }
-
 
         public async Task<TextViewModel> CountWordsAndCharacters(string text)
         {
@@ -79,6 +88,12 @@ namespace Client.Controllers
                 };
                 return textViewModel;
             });
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
     }
 }

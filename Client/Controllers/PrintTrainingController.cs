@@ -15,23 +15,19 @@ namespace Client.Controllers
         {
             _apiService = apiService;
         }
+
         public async Task<ActionResult> Index()
         {
-            string Text = "On your first visit to the site you will be met with an exciting test a test of printing skills after successful completion of the test you will see your result which will be compared with the data of other users";
+            string text = "On your first visit to the site you will be met with an exciting test a test of printing skills after successful completion of the test you will see your result which will be compared with the data of other users";
 
-            TextViewModel textViewModel = await CountWordsAndCharacters(Text);
+            TextViewModel textViewModel = await CountWordsAndCharacters(text);
 
             return View(textViewModel);
         }
-        public ActionResult Result()
-        {
-            return View();
-        }
 
         [HttpPost]
-        public async Task<ActionResult> Result(double totalTime, int countCharacters, int correctSymbols)
+        public ActionResult Result(double totalTime, int countCharacters, int correctSymbols)
         {
-
             int testSettingId = 0; // Заменить на ваш TestSettingId
             double wpm = Math.Round((countCharacters / 5.0) / (totalTime / 60.0));
             double accuracy = Math.Round((double)correctSymbols / countCharacters * 100);
@@ -47,10 +43,9 @@ namespace Client.Controllers
                 Accuracy = accuracy
             };
 
-
-
-            return View("Result", result);
+            return View(result);
         }
+
         public async Task<TextViewModel> CountWordsAndCharacters(string text)
         {
             return await Task.Run(() =>

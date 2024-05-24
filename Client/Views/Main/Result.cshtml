@@ -1,8 +1,20 @@
 ﻿@model Client.Models.Result
 
-<h2>Результаты</h2>
-@* 
-<p>Общее время: @Model.TotalTime</p>
-<p>Количество символов: @Model.CountCharacters</p>
-<p>Скорость ввода: @Model.Wpm</p>
-<p>Точность: @Model.Accuracy</p> *@
+@{
+    ViewBag.Title = "Результаты";
+}
+
+<div class="container">
+    <h2>Результаты</h2>
+
+  
+    
+        <p>Общее время: @Model.TotalTime</p>
+        <p>Количество символов: @Model.CountCharacters</p>
+        <p>Скорость ввода: @Model.Wpm</p>
+        <p>Точность: @Model.Accuracy</p>
+    
+ 
+
+    <a asp-action="Index" asp-controller="Main" class="btn btn-primary">Пройти тест еще раз</a>
+</div>

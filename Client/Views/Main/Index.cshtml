@@ -3,13 +3,117 @@
 @{
     ViewBag.Title = "Index";
 }
+
+<div class="container">
+    <div class="level-selector">
+        <span class="title">Тип</span>
+        <ul class="mode-selector">
+            <li class="mode-item" data-mode="words">Слова</li>
+            <li class="mode-item" data-mode="time">Время</li>
+        </ul>
+        <div class="values">
+            <ul class="words-list">
+                <li class="value-item" data-value="25">25</li>
+                <li class="value-item" data-value="50">50</li>
+            </ul>
+            <ul class="time-list">
+                <li class="value-item" data-value="15">15</li>
+                <li class="value-item" data-value="30">30</li>
+                <li class="value-item" data-value="60">60</li>
+            </ul>
+        </div>
+        <span class="indicator"></span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="text_container">
+            @foreach (string word in Model.Text.Split(' '))
+            {
+                <span class="word_active">
+                    @foreach (char c in word)
+                    {
+                        <span class="symbol">
+                            <letter>@c</letter>
+                        </span>
+                    }
+                    <span class="symbol">
+                        <letter>ㅤ</letter>
+                    </span>
+                </span>
+            }
+        </div>
+        <button id="refresh">
+            <img alt="Update Icon" class="fa-lg" src="~/images/icon-update.svg">
+        </button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var text = '@Model.Text'.toLowerCase().split('');
+        var index = 0;
+        var startTime, endTime;
+
+        $(document).keypress(function (e) {
+            if (index < text.length) {
+                if (index == 0) {
+                    startTime = new Date();
+                }
+                var key = String.fromCharCode(e.which).toLowerCase();
+                if (key == text[index]) {
+                    $('.symbol').eq(index).removeClass('incorrectsymbol').addClass('correctsymbol');
+                } else {
+                    $('.symbol').eq(index).removeClass('correctsymbol').addClass('incorrectsymbol');
+                }
+                index++;
+                if (index == text.length) {
+                    endTime = new Date();
+                    var timeDiff = endTime - startTime;
+                    var typingTime = timeDiff;
+                    var correctSymbols = $('.correctsymbol').length;
+
+                    $.ajax({
+                        url: '/Main/Result',
+                        type: 'POST',
+                        data: {
+                            'totalTime': typingTime,
+                            'countCharacters': text.length,
+                            'correctSymbols': correctSymbols,
+                        },
+                        success: function () {
+                            window.location.href = '/Main/Result';
+                        }
+                    });
+                }
+            }
+        });
+
+        $(document).keydown(function (e) {
+            if (e.which == 8) {
+                if (index > 0) {
+                    index--;
+                    $('.symbol').eq(index).removeClass('correctsymbol incorrectsymbol');
+                }
+                e.preventDefault();
+            }
+        });
+
+        $("#refresh").click(function () {
+            location.reload();
+        });
+    });
+
+</script>
+
 <style>
     .level-selector {
         position: relative;
         display: flex;
         align-items: center;
+        justify-content: center;
+        max-width: 700px;
         padding: 10px;
-        background-color: #333;
+        background-color: #29335C;
         border-radius: 5px;
     }
 
@@ -76,135 +180,8 @@
         border-radius: 50%;
     }
 
+    .container {
+        display: flex;
+        gap: 10px;
+    }
 </style>
-<div class="level-selector">
-    <span class="title">Тип</span>
-    <ul class="mode-selector">
-        <li class="mode-item" data-mode="words">Слова</li>
-        <li class="mode-item" data-mode="time">Время</li>
-    </ul>
-    <div class="values">
-        <ul class="words-list">
-            <li class="value-item" data-value="25">25</li>
-            <li class="value-item" data-value="50">50</li>
-        </ul>
-        <ul class="time-list">
-            <li class="value-item" data-value="15">15</li>
-            <li class="value-item" data-value="30">30</li>
-            <li class="value-item" data-value="60">60</li>
-        </ul>
-    </div>
-    <span class="indicator"></span>
-</div>
-
-<div style="display: flex; flex-direction: column; align-items: center;">
-    <div class="text_container">
-        @foreach (string word in Model.Text.Split(' '))
-        {
-            <span class="word_active">
-                @foreach (char c in word)
-                {
-                    <span class="symbol">
-                        <letter>@c</letter>
-                    </span>
-                }
-                <span class="symbol">
-                    <letter>ㅤ</letter>
-                </span>
-            </span>
-        }
-    </div>
-    <button id="refresh">
-        <img alt="Update Icon" class="fa-lg" src="~/images/icon-update.svg">
-    </button>
-</div>
-
-<script>
-    $(document).ready(function () {
-        var text = '@Model.Text'.toLowerCase().split('');
-        var index = 0;
-        var startTime, endTime;
-
-        $(document).keypress(function (e) {
-            if (index < text.length) {
-                if (index == 0) {
-                    startTime = new Date();
-                }
-                var key = String.fromCharCode(e.which).toLowerCase();
-                if (key == text[index]) {
-                    $('.symbol').eq(index).removeClass('incorrectsymbol').addClass('correctsymbol');
-                } else {
-                    $('.symbol').eq(index).removeClass('correctsymbol').addClass('incorrectsymbol');
-                }
-                index++;
-                if (index == text.length) {
-                    endTime = new Date();
-                    var timeDiff = endTime - startTime;
-                    var typingTime = timeDiff;
-                    var correctSymbols = $('.correctsymbol').length;
-
-                    $.ajax({
-                        url: '/Main/Result',
-                        type: 'POST',
-                        data: {
-                            'totalTime': typingTime,
-                            'countCharacters': text.length,
-                            'correctSymbols': correctSymbols,
-                        },
-                        success: function () {
-                            window.location.href = '/Main/Result';
-                        }
-                    });
-                }
-            }
-        });
-
-        $(document).keydown(function (e) {
-            if (e.which == 8) {
-                if (index > 0) {
-                    index--;
-                    $('.symbol').eq(index).removeClass('correctsymbol incorrectsymbol');
-                }
-                e.preventDefault();
-            }
-        });
-
-        $("#refresh").click(function () {
-            location.reload();
-        });
-    });
-     const modeItems = document.querySelectorAll('.mode-item');
-    const valueItems = document.querySelectorAll('.value-item');
-    const indicator = document.querySelector('.indicator');
-
-    function showValuesList(mode) {
-        const list = document.querySelector(`.${mode}-list`);
-        list.style.display = 'flex';
-        const otherList = mode === 'words' ? '.time-list' : '.words-list';
-        document.querySelector(otherList).style.display = 'none';
-    }
-
-    function updateIndicator(value) {
-        const activeItem = document.querySelector(`.value-item[data-value="${value}"]`);
-        indicator.style.left = `${activeItem.offsetLeft}px`;
-    }
-
-    modeItems.forEach(item => {
-        item.addEventListener('click', () => {
-            currentMode = item.getAttribute('data-mode');
-            showValuesList(currentMode);
-        });
-    });
-
-    valueItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const value = item.getAttribute('data-value');
-            updateIndicator(value);
-        });
-    });
-
-    // Инициализация начального состояния
-    showValuesList(currentMode);
-    const activeValueItem = document.querySelector(`.value-item[data-value="25"]`); // Установить начальное значение для слов
-    indicator.style.left = `${activeValueItem.offsetLeft}px`;
-</script>

@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,17 +8,37 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Client.styles.css" asp-append-version="true" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 </head>
 <body style="background-color: #7D869C;">
-    <header>
+         @if (User.Identity.IsAuthenticated){ 
+    <header style="background-color: #29335C;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-#29335C border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Main" asp-action="Index" style="color: #fff;">Blind Typing</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            
+                            <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Profile">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Logout" method="post">Выйти</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
+     }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
     <footer class="footer">
         <div class="text-center p-4">
             <span class="text-white">© 2024 Blind Typing by Marfa</span>

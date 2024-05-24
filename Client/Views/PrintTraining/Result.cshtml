@@ -1,8 +1,20 @@
 ﻿@model Client.Models.Result
+<div>
+    <div class="results-container">
+        <h2>Результаты</h2>
 
-<h2>Результаты</h2>
-
-<p>Общее время: @Model.TotalTime</p>
-<p>Количество символов: @Model.CountCharacters</p>
-<p>Скорость ввода: @Model.Wpm</p>
-<p>Точность: @Model.Accuracy</p>
+        <div class="result-item">
+            <strong>Общее время:</strong> @Model.TotalTime
+        </div>
+        <div class="result-item">
+            <strong>Количество символов:</strong> @Model.CountCharacters
+        </div>
+        <div class="result-item">
+            <strong>Скорость ввода:</strong> @Model.Wpm
+        </div>
+        <div class="result-item">
+            <strong>Точность:</strong> @Model.Accuracy
+        </div>
+        <a asp-action="registration" asp-controller="Account" class="btn btn-secondary">Зарегистрироваться</a>
+    </div>
+</div>

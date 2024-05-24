@@ -1,0 +1,38 @@
+﻿@model Client.Models.UserProfileViewModel
+
+<h2>Профиль пользователя</h2>
+
+<p>Email: @Model.User.Email</p>
+
+<h3>Результаты тестов</h3>
+
+<p>
+    <a asp-action="Profile" asp-route-sortOrder="date">Сортировать по возрастанию даты</a> |
+    <a asp-action="Profile" asp-route-sortOrder="date_desc">Сортировать по убыванию даты</a>
+</p>
+<div class="scrollable-table">
+
+<table class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Дата и время теста</th>
+                <th>Количество символов</th>
+                <th>Общее время</th>
+                <!-- Добавьте другие столбцы при необходимости -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in Model.TestResults)
+            {
+                <tr>
+                    <td>@result.TestDateTime</td>
+                    <td>@result.CountCharacters</td>
+                    <td>@result.TotalTime</td>
+                    <!-- Добавьте другие столбцы при необходимости -->
+                </tr>
+            }
+        </tbody>
+    </table>
+</table>
+</div>

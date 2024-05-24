@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
 using System.Security.Claims;
+using Client.Models;
 
 namespace Client.Controllers
 {
@@ -42,6 +43,7 @@ namespace Client.Controllers
             {
                 var response = await _authService.Login(model);
 
+
                 var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, model.Email),
@@ -64,18 +66,19 @@ namespace Client.Controllers
             catch (ApiException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                ModelState.AddModelError("CustomError", "Пользователь не найден. Пожалуйста, проверьте правильность введенных данных.");
                 return View(model);
             }
         }
 
 
-        public IActionResult Register()
+        public IActionResult registration()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(UserRegistrationRequest model)
+        public async Task<IActionResult> registration(UserRegistrationRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -93,5 +96,43 @@ namespace Client.Controllers
                 return View(model);
             }
         }
+
+        public async Task<IActionResult> Profile(string sortOrder)
+        {
+            // Получаем текущего пользователя
+            var user = await _authService.GetUserByEmail(User.FindFirst(ClaimTypes.Name).Value);
+
+            // Получаем результаты тестов пользователя
+            var testResults = await _authService.GetUserTestResults(user.Id);
+
+            // Фильтруем результаты тестов по дате
+            switch (sortOrder)
+            {
+                case "date_desc":
+                    testResults = testResults.OrderByDescending(r => r.TestDateTime).ToList();
+                    break;
+                default:
+                    testResults = testResults.OrderBy(r => r.TestDateTime).ToList();
+                    break;
+            }
+
+            // Создаем модель представления для отображения на странице профиля
+            var viewModel = new UserProfileViewModel
+            {
+                User = user,
+                TestResults = testResults
+            };
+
+            return View(viewModel);
+        }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+
+
     }
 }

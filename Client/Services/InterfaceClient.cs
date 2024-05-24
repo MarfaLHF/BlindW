@@ -57,5 +57,8 @@ namespace Client.Services
 
         [Get("/api/GetText/randomText")]
         Task<string> GetRandomText(int wordCount);
+        [Get("/api/TestResults/user/{userId}")]
+        Task<IEnumerable<TestResult>> GetUserTestResults(string userId);
+
     }
 }

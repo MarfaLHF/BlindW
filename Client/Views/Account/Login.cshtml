@@ -6,6 +6,12 @@
 }
 
 <div class="container">
+    @if (ViewData.ModelState.ContainsKey("CustomError"))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Html.Raw(ViewData.ModelState["CustomError"].Errors.FirstOrDefault()?.ErrorMessage)
+        </div>
+    }
     <form class="login-form" method="post">
         <h2 class="mb-4">Вход</h2>
         <div class="form-group">

@@ -117,5 +117,23 @@ namespace BlindW.Controllers
         {
             return _context.TestResults.Any(e => e.TestResultId == id);
         }
+
+
+        // GET: api/TestResults/user/{userId}
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<TestResult>>> GetUserTestResults(string userId)
+        {
+            var userTestResults = await _context.TestResults
+                .Where(tr => tr.UserId == userId)
+                .ToListAsync();
+
+            if (userTestResults == null || userTestResults.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return userTestResults;
+        }
+
     }
 }
