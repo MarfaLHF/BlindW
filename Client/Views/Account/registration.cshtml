@@ -1,30 +1,54 @@
-﻿<div class="container">
-    <h1 class="mb-4">Регистрация</h1>
-    <form method="post" action="/Account/Register">
-        <div class="form-group">
-            <label for="firstName">Имя:</label>
-            <input type="text" class="form-control" id="firstName" name="FirstName" placeholder="Введите ваше имя">
+﻿@model Client.Models.Requests.UserRegistrationRequest
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container mt-5" style="max-width: 500px;">
+    <h2 class="mb-4 text-center text-white">Регистрация</h2>
+
+    <form asp-action="registration" method="post">
+        <div class="form-group mb-3">
+            <label asp-for="FirstName" class="text-white"></label>
+            <input asp-for="FirstName" class="form-control" placeholder="Ваше имя" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label for="lastName">Фамилия:</label>
-            <input type="text" class="form-control" id="lastName" name="LastName" placeholder="Введите вашу фамилию">
+
+        <div class="form-group mb-3">
+            <label asp-for="LastName" class="text-white"></label>
+            <input asp-for="LastName" class="form-control" placeholder="Ваша фамилия" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label for="login">Имя пользователя:</label>
-            <input type="text" class="form-control" id="login" name="Login" placeholder="Введите ваше имя пользователя">
+
+        <div class="form-group mb-3">
+            <label asp-for="Login" class="text-white"></label>
+            <input asp-for="Login" class="form-control" placeholder="Логин" />
+            <span asp-validation-for="Login" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" name="Email" placeholder="Введите ваш адрес электронной почты">
+
+        <div class="form-group mb-3">
+            <label asp-for="Email" class="text-white"></label>
+            <input asp-for="Email" class="form-control" placeholder="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label for="password">Пароль:</label>
-            <input type="password" class="form-control" id="password" name="Password" placeholder="Введите ваш пароль">
+
+        <div class="form-group mb-3">
+            <label asp-for="Password" class="text-white"></label>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Пароль" />
+            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label for="confirmPassword">Подтвердите пароль:</label>
-            <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" placeholder="Подтвердите ваш пароль">
-        </div>
-        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+
+        <button type="submit" class="btn btn-light w-100 mt-3">Зарегистрироваться</button>
     </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger mt-3">@ViewBag.Error</div>
+    }
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

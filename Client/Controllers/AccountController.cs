@@ -72,13 +72,13 @@ namespace Client.Controllers
         }
 
 
-        public IActionResult registration()
+        public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> registration(UserRegistrationRequest model)
+        public async Task<IActionResult> Register(UserRegistrationRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -96,6 +96,8 @@ namespace Client.Controllers
                 return View(model);
             }
         }
+
+
 
         public async Task<IActionResult> Profile(string sortOrder)
         {

@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Drawing;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace BlindW.Controllers
 {
@@ -10,21 +7,32 @@ namespace BlindW.Controllers
     [ApiController]
     public class GetTextController : ControllerBase
     {
-        private readonly HttpClient _client;
-
-        public GetTextController(HttpClient client)
-        {
-            _client = client;
-        }
+        private static string[]? _words;
 
         [HttpGet("randomText")]
         public async Task<string> GetRandomText(int wordCount)
         {
-            // Запрос к внешнему сервису для получения случайных слов
-            var response = await _client.GetStringAsync($"https://random-word-api.herokuapp.com/word?number={wordCount}");
+            // Загружаем файл один раз в память (кешируем)
+            if (_words == null || _words.Length == 0)
+            {
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "words.txt");
 
-            // Возвращаем случайный текст как строку
-            return response;
+                if (!System.IO.File.Exists(path))
+                {
+                    return $"Файл не найден: {path}";
+                }
+
+                _words = await System.IO.File.ReadAllLinesAsync(path);
+            }
+
+            // Генерация случайного текста
+            var rnd = new Random();
+            var result = Enumerable.Range(0, wordCount)
+                                   .Select(_ => _words[rnd.Next(_words.Length)])
+                                   .ToList();
+
+            // Возвращаем JSON-массив слов
+            return JsonSerializer.Serialize(result);
         }
     }
 }

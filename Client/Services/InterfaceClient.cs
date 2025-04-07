@@ -7,8 +7,12 @@ namespace Client.Services
 {
     public interface InterfaceClient
     {
+
+
+
         [Post("/Account/registration")]
         Task Register(UserRegistrationRequest request);
+
         [Get("/Account/user")]
         Task<User> GetUserByEmail(string email);    
 
