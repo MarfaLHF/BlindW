@@ -101,13 +101,28 @@ namespace Client.Controllers
 
         public async Task<IActionResult> Profile(string sortOrder)
         {
-            // Получаем текущего пользователя
             var user = await _authService.GetUserByEmail(User.FindFirst(ClaimTypes.Name).Value);
 
-            // Получаем результаты тестов пользователя
-            var testResults = await _authService.GetUserTestResults(user.Id);
+            IEnumerable<TestResult> testResults = new List<TestResult>();
 
-            // Фильтруем результаты тестов по дате
+            try
+            {
+                testResults = await _authService.GetUserTestResults(user.Id);
+            }
+            catch (ValidationApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    // Просто нет результатов — оставляем testResults пустым
+                    testResults = new List<TestResult>();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            // Сортировка
             switch (sortOrder)
             {
                 case "date_desc":
@@ -118,7 +133,6 @@ namespace Client.Controllers
                     break;
             }
 
-            // Создаем модель представления для отображения на странице профиля
             var viewModel = new UserProfileViewModel
             {
                 User = user,
@@ -127,6 +141,7 @@ namespace Client.Controllers
 
             return View(viewModel);
         }
+
 
 
         public async Task<IActionResult> Logout()

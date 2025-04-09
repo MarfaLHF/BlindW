@@ -72,18 +72,25 @@
                     var typingTime = timeDiff;
                     var correctSymbols = $('.correctsymbol').length;
 
-                    $.ajax({
-                        url: '/Main/Result',
-                        type: 'POST',
-                        data: {
-                            'totalTime': typingTime,
-                            'countCharacters': text.length,
-                            'correctSymbols': correctSymbols,
-                        },
-                        success: function () {
-                            window.location.href = '/Main/Result';
-                        }
-                    });
+                        $.ajax({
+        url: '/Main/Result',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            totalTime: typingTime,
+            countCharacters: text.length,
+            correctSymbols: correctSymbols
+        }),
+        success: function () {
+            window.location.replace('/Main/Result');
+        },
+        error: function (xhr) {
+            alert('Ошибка при сохранении результата:\n' +
+                  'Статус: ' + xhr.status + '\n' +
+                  'Ответ: ' + xhr.responseText);
+        }
+    });
+
                 }
             }
         });

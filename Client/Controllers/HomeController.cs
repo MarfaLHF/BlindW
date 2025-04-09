@@ -16,10 +16,16 @@ namespace Client.Controllers
             _userApiClient = userApiClient;
         }
 
-        public async Task<IActionResult> Index() 
+        public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Main");
+            }
+
             return View();
         }
+
 
         public IActionResult Privacy()
         {

@@ -45,10 +45,17 @@ namespace Client.Controllers
         {
             var user = await _apiService.GetUserByEmail(User.FindFirst(ClaimTypes.Name).Value);
 
-            int testSettingId = 0; // Заменить на ваш TestSettingId
-            double wpm = Math.Round((countCharacters / 5.0) / (totalTime / 60.0));
-            double accuracy = Math.Round((double)correctSymbols / countCharacters * 100);
-            totalTime = Math.Round(totalTime / 1000);
+            int testSettingId = 0;
+
+            double wpm = (totalTime > 0)
+                ? Math.Round((countCharacters / 5.0) / (totalTime / 60.0))
+                : 0;
+
+            double accuracy = (countCharacters > 0)
+                ? Math.Round((double)correctSymbols / countCharacters * 100)
+                : 0;
+
+            totalTime = Math.Round(totalTime / 1000); // перевод в секунды
 
             Result result = new Result
             {
@@ -66,6 +73,7 @@ namespace Client.Controllers
 
             return RedirectToAction("Result");
         }
+
 
         public async Task<TextViewModel> CountWordsAndCharacters(string text)
         {
