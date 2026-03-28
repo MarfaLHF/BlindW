@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BlindW.Data.Models;
 using BlindW.Controllers.Requests;
-
 
 namespace BlindW.Controllers
 {
@@ -20,6 +21,27 @@ namespace BlindW.Controllers
             _signInManager = signInManager;
         }
 
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMe()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new
+            {
+                id = user.Id,
+                email = user.Email,
+                userName = user.UserName,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                login = user.Login
+            });
+        }
         [HttpPost("registration")]
         public async Task<IActionResult> Register(UserRegistrationRequest model)
         {

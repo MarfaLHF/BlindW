@@ -75,7 +75,6 @@ namespace BlindW.Controllers
         }
 
         // POST: api/TestResults
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<TestResult>> PostTestResult(Result testResult)
         {
@@ -88,12 +87,22 @@ namespace BlindW.Controllers
                 TotalTime = testResult.TotalTime,
                 Wpm = testResult.Wpm,
                 Accuracy = testResult.Accuracy
-
             };
+
             _context.TestResults.Add(result);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTestResult", new { id = testResult.TestResultId }, testResult);
+            // ⬇⬇ Добавляем в таблицу лидеров
+            var leaderboard = new Leaderboard
+            {
+                TestResultId = result.TestResultId,
+                RankingType = "wpm" // можно изменить на "accuracy" или добавлять оба типа
+            };
+
+            _context.Leaderboards.Add(leaderboard);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetTestResult", new { id = result.TestResultId }, result);
         }
 
 

@@ -9,6 +9,8 @@ namespace Client.Services
     {
 
 
+        [Get("/api/Leaderboards/top")]
+        Task<IEnumerable<Leaderboard>> GetTopLeaderboard(int count = 10);
 
         [Post("/Account/registration")]
         Task Register(UserRegistrationRequest request);

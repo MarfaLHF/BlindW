@@ -45,7 +45,7 @@ namespace Client.Controllers
         {
             var user = await _apiService.GetUserByEmail(User.FindFirst(ClaimTypes.Name).Value);
 
-            int testSettingId = 0;
+            int testSettingId = 1;
 
             double wpm = (totalTime > 0)
                 ? Math.Round((countCharacters / 5.0) / (totalTime / 60.0))

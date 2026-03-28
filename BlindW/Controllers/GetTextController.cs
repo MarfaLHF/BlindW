@@ -12,7 +12,6 @@ namespace BlindW.Controllers
         [HttpGet("randomText")]
         public async Task<string> GetRandomText(int wordCount)
         {
-            // Загружаем файл один раз в память (кешируем)
             if (_words == null || _words.Length == 0)
             {
                 string path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "words.txt");

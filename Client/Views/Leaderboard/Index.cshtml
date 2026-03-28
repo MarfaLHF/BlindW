@@ -1,0 +1,29 @@
+﻿@model List<BlindW.Data.Models.Leaderboard>
+
+@{
+    ViewData["Title"] = "Таблица лидеров";
+}
+
+<h2>Таблица лидеров</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Пользователь</th>
+            <th>WPM</th>
+            <th>Точность</th>
+            <th>Тип теста</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TestResult?.User?.UserName</td>
+                <td>@item.TestResult?.Wpm</td>
+                <td>@item.TestResult?.Accuracy</td>
+                <td>@item.RankingType</td>
+            </tr>
+        }
+    </tbody>
+</table>
