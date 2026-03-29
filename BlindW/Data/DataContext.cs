@@ -6,7 +6,6 @@ namespace BlindW.Data
 {
     public class DataContext : IdentityDbContext<User>
     {
-
         private readonly IConfiguration _configuration;
 
         public DataContext(IConfiguration configuration)
@@ -18,15 +17,15 @@ namespace BlindW.Data
         {
             optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
         }
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Level> Levels { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<TestSetting> TestSettings { get; set; }
-        public DbSet<TestType> TestTyps { get; set; }
+        public DbSet<TestType> TestTypes { get; set; }
         public DbSet<WordCount> WordCounts { get; set; }
         public DbSet<TestDuration> TestDurations { get; set; }
+        public DbSet<Language> Languages { get; set; }
         public DbSet<Leaderboard> Leaderboards { get; set; }
-
     }
 }

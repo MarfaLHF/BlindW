@@ -74,10 +74,15 @@ namespace BlindW.Controllers
             return NoContent();
         }
 
-        // POST: api/TestResults
         [HttpPost]
         public async Task<ActionResult<TestResult>> PostTestResult(Result testResult)
         {
+            var testSettingExists = await _context.TestSettings.AnyAsync(ts => ts.TestSettingId == testResult.TestSettingId);
+            if (!testSettingExists)
+            {
+                return BadRequest("Указанная настройка теста не существует.");
+            }
+
             var result = new TestResult
             {
                 UserId = testResult.UserId,
@@ -92,11 +97,10 @@ namespace BlindW.Controllers
             _context.TestResults.Add(result);
             await _context.SaveChangesAsync();
 
-            // ⬇⬇ Добавляем в таблицу лидеров
             var leaderboard = new Leaderboard
             {
                 TestResultId = result.TestResultId,
-                RankingType = "wpm" // можно изменить на "accuracy" или добавлять оба типа
+                RankingType = "wpm"
             };
 
             _context.Leaderboards.Add(leaderboard);

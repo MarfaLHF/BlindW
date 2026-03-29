@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { getRandomText } from "../../services/textService";
-import { useAuth } from "../../context/AuthContext";
+import { findOrCreateTestSetting } from "../../services/testSettingService";
 import { saveTestResult } from "../../services/testResultService";
+import { useAuth } from "../../context/AuthContext";
+
 import { buildTestResultPayload } from "./utils/buildTestResultPayload";
+import { mapSettingsToApi } from "./utils/mapSettingsToApi";
 
 import TextViewport from "./components/TextViewport";
 import FocusOverlay from "./components/FocusOverlay";
@@ -38,9 +41,14 @@ export default function TestPage() {
   const [err, setErr] = useState("");
   const [isSavingResult, setIsSavingResult] = useState(false);
 
-  const [mode, setMode] = useState("words"); // words | time
-  const [wordCount, setWordCount] = useState(25);
-  const [durationSec, setDurationSec] = useState(30);
+  const [settings, setSettings] = useState({
+    mode: "words",
+    wordCount: 25,
+    durationSec: 30,
+    language: "en",
+    isNumbersEnabled: false,
+    isPunctuationEnabled: false,
+  });
 
   const targetText = useMemo(() => {
     return words.length ? words.join(" ") : "";
@@ -49,33 +57,45 @@ export default function TestPage() {
   const { hasFocus, focusInput } = useInputFocus(inputRef);
   const containerWidth = useResizeWidth(containerRef, 800);
 
-  const loadText = async () => {
+  const loadText = useCallback(async () => {
     setLoading(true);
     setErr("");
 
     try {
-      const requestedWordCount = mode === "time" ? 300 : wordCount;
-      const data = await getRandomText(requestedWordCount);
+      const mapped = mapSettingsToApi(settings);
+
+      const requestedWordCount =
+        settings.mode === "time" ? 300 : settings.wordCount;
+
+      const requestBody = {
+        wordCount: requestedWordCount,
+        languageCode: mapped.languageCode,
+        isNumbersEnabled: settings.isNumbersEnabled,
+        isPunctuationEnabled: settings.isPunctuationEnabled,
+      };
+
+      console.log("GET TEXT REQUEST BODY:", requestBody);
+
+      const data = await getRandomText(requestBody);
 
       setWords(data);
       hasHandledFinishRef.current = false;
 
       requestAnimationFrame(() => {
-        focusInput();
+        inputRef.current?.focus();
       });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error("Ошибка загрузки текста:", error);
       setErr("Не удалось получить текст с API.");
+      setWords([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [settings]);
 
   const typing = useTypingEngine(targetText, {
-    onRestart: () => {
-      typing.reset();
-      timer.reset();
-      loadText();
+    onRestart: async () => {
+      await loadText();
     },
   });
 
@@ -88,17 +108,16 @@ export default function TestPage() {
 
   useEffect(() => {
     loadText();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, wordCount, durationSec]);
+  }, [loadText]);
 
   useEffect(() => {
-    if (mode !== "time") return;
+    if (settings.mode !== "time") return;
     if (typing.status !== "running") return;
 
-    if (timer.elapsedMs >= durationSec * 1000) {
+    if (timer.elapsedMs >= settings.durationSec * 1000) {
       typing.setStatus("finished");
     }
-  }, [mode, durationSec, timer.elapsedMs, typing]);
+  }, [settings.mode, settings.durationSec, timer.elapsedMs, typing]);
 
   useEffect(() => {
     if (typing.status !== "finished") {
@@ -115,9 +134,12 @@ export default function TestPage() {
         accuracy: metrics.accuracy,
         wrong: metrics.wrong,
         elapsedMs: timer.elapsedMs,
-        mode,
-        wordCount,
-        durationSec,
+        mode: settings.mode,
+        wordCount: settings.wordCount,
+        durationSec: settings.durationSec,
+        language: settings.language,
+        isNumbersEnabled: settings.isNumbersEnabled,
+        isPunctuationEnabled: settings.isPunctuationEnabled,
         countCharacters: targetText.length,
       };
 
@@ -125,24 +147,34 @@ export default function TestPage() {
         try {
           setIsSavingResult(true);
 
+          const mapped = mapSettingsToApi(settings);
+
+          const foundOrCreatedSetting = await findOrCreateTestSetting({
+            isPunctuationEnabled: mapped.isPunctuationEnabled,
+            isNumbersEnabled: mapped.isNumbersEnabled,
+            testTypeId: mapped.testTypeId,
+            wordCountId: mapped.wordCountId,
+            testDurationId: mapped.testDurationId,
+            languageId: mapped.languageId,
+          });
+
           const payload = buildTestResultPayload({
             metrics,
             elapsedMs: timer.elapsedMs,
-            mode,
-            wordCount,
-            durationSec,
             targetText,
             user,
+            testSettingId: foundOrCreatedSetting.testSettingId,
           });
 
           console.log("USER:", user);
-console.log("Сохранение результата:", payload);
+          console.log("TEST SETTING:", foundOrCreatedSetting);
+          console.log("SAVE PAYLOAD:", payload);
 
-if (!payload.userId) {
-  console.error("Не найден userId для сохранения результата");
-} else {
-  await saveTestResult(payload);
-}
+          if (!payload.userId) {
+            console.error("Не найден userId для сохранения результата");
+          } else {
+            await saveTestResult(payload);
+          }
         } catch (error) {
           console.error("Ошибка сохранения результата:", error);
         } finally {
@@ -163,9 +195,7 @@ if (!payload.userId) {
     metrics.accuracy,
     metrics.wrong,
     timer.elapsedMs,
-    mode,
-    wordCount,
-    durationSec,
+    settings,
     targetText,
     isAuthenticated,
     user,
@@ -207,6 +237,11 @@ if (!payload.userId) {
     }
   };
 
+  const handleNewText = async () => {
+    timer.reset();
+    await loadText();
+  };
+
   if (loading) {
     return <div style={{ padding: 40, fontSize: 18 }}>Загрузка…</div>;
   }
@@ -232,14 +267,7 @@ if (!payload.userId) {
           BlindW — Тест
         </h1>
 
-        <TestSettings
-          mode={mode}
-          setMode={setMode}
-          wordCount={wordCount}
-          setWordCount={setWordCount}
-          durationSec={durationSec}
-          setDurationSec={setDurationSec}
-        />
+        <TestSettings settings={settings} setSettings={setSettings} />
 
         <div style={{ position: "relative" }}>
           <div
@@ -287,11 +315,7 @@ if (!payload.userId) {
         />
 
         <StatsBar
-          onNewText={() => {
-            typing.reset();
-            timer.reset();
-            loadText();
-          }}
+          onNewText={handleNewText}
           typedIndex={typing.typedIndex}
           total={targetText.length}
           status={typing.status}

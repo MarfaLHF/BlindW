@@ -1,87 +1,207 @@
-const modes = [
-  { key: "words", label: "Слова" },
-  { key: "time", label: "Время" },
-];
+export default function TestSettings({ settings, setSettings }) {
+  const setMode = (mode) => {
+    setSettings((prev) => ({
+      ...prev,
+      mode,
+    }));
+  };
 
-const wordOptions = [10, 25, 50, 120];
-const timeOptions = [15, 30, 60, 120];
+  const setWordCount = (wordCount) => {
+    setSettings((prev) => ({
+      ...prev,
+      wordCount,
+    }));
+  };
 
-function Pill({ active, children, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: "8px 12px",
-        borderRadius: 999,
-        border: "1px solid #333",
-        background: active ? "#ffffff" : "#141414",
-        color: active ? "#000000" : "#ffffff",
-        cursor: "pointer",
-        fontSize: 14,
-      }}
-    >
-      {children}
-    </button>
-  );
-}
+  const setDurationSec = (durationSec) => {
+    setSettings((prev) => ({
+      ...prev,
+      durationSec,
+    }));
+  };
 
-export default function TestSettings({
-  mode,
-  setMode,
-  wordCount,
-  setWordCount,
-  durationSec,
-  setDurationSec,
-}) {
+  const setLanguage = (language) => {
+    setSettings((prev) => ({
+      ...prev,
+      language,
+    }));
+  };
+
+  const toggleNumbers = () => {
+    setSettings((prev) => ({
+      ...prev,
+      isNumbersEnabled: !prev.isNumbersEnabled,
+    }));
+  };
+
+  const togglePunctuation = () => {
+    setSettings((prev) => ({
+      ...prev,
+      isPunctuationEnabled: !prev.isPunctuationEnabled,
+    }));
+  };
+
+  const baseButtonStyle = {
+    padding: "8px 14px",
+    borderRadius: 10,
+    border: "1px solid #2a2a2a",
+    background: "#151515",
+    color: "white",
+    cursor: "pointer",
+    fontSize: 14,
+  };
+
+  const activeButtonStyle = {
+    ...baseButtonStyle,
+    background: "#2a2a2a",
+    border: "1px solid #4a4a4a",
+  };
+
   return (
     <div
       style={{
-        marginBottom: 14,
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        alignItems: "center",
+        display: "grid",
+        gap: 14,
+        marginBottom: 18,
+        padding: 16,
+        border: "1px solid #222",
+        borderRadius: 14,
+        background: "#101010",
       }}
     >
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-        {modes.map((item) => (
-          <Pill
-            key={item.key}
-            active={mode === item.key}
-            onClick={() => setMode(item.key)}
-          >
-            {item.label}
-          </Pill>
-        ))}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 10,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span style={{ opacity: 0.8 }}>Режим:</span>
+
+        <button
+          type="button"
+          onClick={() => setMode("words")}
+          style={settings.mode === "words" ? activeButtonStyle : baseButtonStyle}
+        >
+          По словам
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMode("time")}
+          style={settings.mode === "time" ? activeButtonStyle : baseButtonStyle}
+        >
+          По времени
+        </button>
       </div>
 
-      {mode === "words" && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-          {wordOptions.map((value) => (
-            <Pill
-              key={value}
-              active={wordCount === value}
-              onClick={() => setWordCount(value)}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 10,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span style={{ opacity: 0.8 }}>Язык:</span>
+
+        <button
+          type="button"
+          onClick={() => setLanguage("en")}
+          style={settings.language === "en" ? activeButtonStyle : baseButtonStyle}
+        >
+          EN
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setLanguage("ru")}
+          style={settings.language === "ru" ? activeButtonStyle : baseButtonStyle}
+        >
+          RU
+        </button>
+      </div>
+
+      {settings.mode === "words" && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <span style={{ opacity: 0.8 }}>Количество слов:</span>
+
+          {[25, 50, 100].map((count) => (
+            <button
+              key={count}
+              type="button"
+              onClick={() => setWordCount(count)}
+              style={settings.wordCount === count ? activeButtonStyle : baseButtonStyle}
             >
-              {value} слов
-            </Pill>
+              {count}
+            </button>
           ))}
         </div>
       )}
 
-      {mode === "time" && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-          {timeOptions.map((value) => (
-            <Pill
-              key={value}
-              active={durationSec === value}
-              onClick={() => setDurationSec(value)}
+      {settings.mode === "time" && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <span style={{ opacity: 0.8 }}>Время:</span>
+
+          {[15, 30, 60].map((sec) => (
+            <button
+              key={sec}
+              type="button"
+              onClick={() => setDurationSec(sec)}
+              style={settings.durationSec === sec ? activeButtonStyle : baseButtonStyle}
             >
-              {value} сек
-            </Pill>
+              {sec} сек
+            </button>
           ))}
         </div>
       )}
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 10,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span style={{ opacity: 0.8 }}>Дополнительно:</span>
+
+        <button
+          type="button"
+          onClick={toggleNumbers}
+          style={settings.isNumbersEnabled ? activeButtonStyle : baseButtonStyle}
+        >
+          Цифры {settings.isNumbersEnabled ? "вкл" : "выкл"}
+        </button>
+
+        <button
+          type="button"
+          onClick={togglePunctuation}
+          style={settings.isPunctuationEnabled ? activeButtonStyle : baseButtonStyle}
+        >
+          Пунктуация {settings.isPunctuationEnabled ? "вкл" : "выкл"}
+        </button>
+      </div>
     </div>
   );
 }

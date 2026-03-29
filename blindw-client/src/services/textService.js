@@ -1,8 +1,17 @@
 import { api } from "./api";
 
-export async function getRandomText(wordCount) {
-  const res = await api.get("/api/GetText/randomText", {
-    params: { wordCount },
+export async function getRandomText({
+  wordCount,
+  languageCode = "en",
+  isNumbersEnabled = false,
+  isPunctuationEnabled = false,
+}) {
+  const response = await api.post("/api/GetText/randomText", {
+    wordCount,
+    languageCode,
+    isNumbersEnabled,
+    isPunctuationEnabled,
   });
-  return res.data; // массив слов
+
+  return response.data;
 }

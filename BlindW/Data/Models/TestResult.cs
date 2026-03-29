@@ -7,19 +7,20 @@ namespace BlindW.Data.Models
     {
         [Key]
         public int TestResultId { get; set; }
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        [ForeignKey("TestSetting")]
+
+        [ForeignKey(nameof(User))]
+        public string UserId { get; set; } = null!;
+
+        [ForeignKey(nameof(TestSetting))]
         public int TestSettingId { get; set; }
+
         public DateTime TestDateTime { get; set; }
         public int CountCharacters { get; set; }
         public double TotalTime { get; set; }
         public double Wpm { get; set; }
         public double Accuracy { get; set; }
 
-        public virtual User User { get; set; }
-        public virtual TestSetting TestSetting { get; set; }
-
+        public virtual User User { get; set; } = null!;
+        public virtual TestSetting TestSetting { get; set; } = null!;
     }
-
 }
